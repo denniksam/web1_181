@@ -6,13 +6,15 @@
         <exploded>true</exploded>
         <module>web1</module>
         <packaging>war</packaging>
-        <unpackNestedArchives>false</unpackNestedArchives>
       </options>
     </properties>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="web1" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.googlecode.json-simple:json-simple:1.1" />
         </element>
       </element>
       <element id="directory" name="META-INF">

@@ -1,4 +1,4 @@
-<%--
+<%@ page import="java.util.Locale" %><%--
   Created by IntelliJ IDEA.
   User: Admin
   Date: 29.09.2021
@@ -8,12 +8,27 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     String button = request.getParameter( "button" ) ;
-    String loginMessage = "" ;
+    String loginMessage = "", realNameMessage = "" ;
     if( button != null ) {
         String login = request.getParameter( "login" ) ;
         if( login == null || login.isEmpty() ) {
-            loginMessage = "Login shell not be empty";
+            loginMessage = "Login shell not be empty" ;
+        } else {
+            if( login.toLowerCase().equals( "user1" )
+             || login.equalsIgnoreCase( "user2" ) ) {
+                loginMessage = "Login in use" ;
+            }
         }
+        String realName = request.getParameter("realName");
+        if (realName == null || realName.isEmpty()) {
+            realNameMessage = "Real name shell not be empty";
+        } else {
+            if (realName.length() < 2) {
+                realNameMessage = "Real name shell not be shorter than 2 symbols";
+            }
+        }
+
+        // Password: 8 sym long; 1 UPPER, 1 lower, 1 digit, 1 \W
     }
 %>
 
@@ -51,6 +66,7 @@
     <div>
         <label>Real name:</label>
         <input name="realName" />
+        <%= realNameMessage %>
     </div>
     <input type="submit" value="Register" name="button" />
 </form>
