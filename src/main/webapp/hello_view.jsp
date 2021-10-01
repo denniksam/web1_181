@@ -5,7 +5,7 @@
   Time: 9:16
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Hello</title>
@@ -33,6 +33,22 @@
     <p id="server-result"></p>
 
 <script src="js/hello_view.js"></script>
+
+<h2>Формы. Продвинутая работа</h2>
+<form method="post" action="" >
+    Телефон <input type="text" name="cellular" />
+    <%= request.getAttribute("cellphoneMessage") %>
+    <br/>
+    Имя <input type="text" name="username" />
+    <%= request.getAttribute("usernameMessage") %>
+    <br/>
+    <input type="submit" value="Заказ звонка" />
+</form>
+    <br/>getRequestURI()  <%= request.getRequestURI()  %>
+    <br/>getContextPath() <%= request.getContextPath() %>
+    <br/>getServletPath() <%= request.getServletPath() %>
+    <br/>getPathInfo()    <%= request.getPathInfo()    %>
+    <br/>getQueryString() <%= request.getQueryString() %>
 
 </body>
 </html>
