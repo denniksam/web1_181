@@ -1,6 +1,7 @@
 package step.java.web1;
 
 import java.io.*;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
@@ -40,6 +41,23 @@ public class HelloServlet extends HttpServlet {
             request.setAttribute(
                     "usernameMessage", usernameMessage ) ;
 
+            // Часть задачи по подстановке прошлых данных
+            //for( String attrName :
+            //        new String[] { "cellValue", "nameValue" } )
+            Enumeration<String> names = session.getAttributeNames() ;
+            while( names.hasMoreElements() ) {
+                String attrName = names.nextElement() ;
+                if( attrName.endsWith( "Value" ) ) {
+                    String theValue = (String)
+                            session.getAttribute( attrName ) ;
+                    if( theValue != null )
+                        session.removeAttribute( attrName ) ;
+                    request.setAttribute( attrName,
+                            ( theValue == null ) ? "" : theValue ) ;
+                }
+            }
+
+
             // Загружаем представление (View)
             request
             .getRequestDispatcher( "hello_view.jsp" )
@@ -67,11 +85,19 @@ public class HelloServlet extends HttpServlet {
         String cellphoneMessage = "" ;
         if(cellphone == null || cellphone.isEmpty() ) {
             cellphoneMessage = "Телефон не может быть пустым" ;
+        } else {
+            if( ! cellphone.matches("^\\d+$") ) {
+                cellphoneMessage = "Cellphone must have only digits" ;
+            }
         }
         // Задание: реализовать обработку username, вывод сообщения
         String usernameMessage = "";
         if( username == null || username.isEmpty() ) {
             usernameMessage = "User name can not be empty" ;
+        } else {
+            if( ! username.matches("^\\D+$") ) {
+                usernameMessage = "User name must have no digits" ;
+            }
         }
 
         // НТТР сессия - способ хранения данных между запросами
@@ -80,6 +106,18 @@ public class HelloServlet extends HttpServlet {
                 "cellphoneMessage", cellphoneMessage ) ;
         session.setAttribute(
                 "usernameMessage", usernameMessage ) ;
+
+        // Задача: отображать на форме ранее введенные
+        // значения ЕСЛИ данные не приняты
+        if( usernameMessage.length()  > 0
+         || cellphoneMessage.length() > 0 ) {
+            // есть сообщение(я) - валидация не прошла
+            // сохраняем в сессии полученные значения
+            session.setAttribute( "cellValue", cellphone ) ;
+            session.setAttribute( "nameValue", username  ) ;
+        }
+
+
 
         resp.sendRedirect( req.getRequestURI() ) ;  /*
             Клиент получит ответ со статусом 30х и

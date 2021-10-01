@@ -36,10 +36,14 @@
 
 <h2>Формы. Продвинутая работа</h2>
 <form method="post" action="" >
-    Телефон <input type="text" name="cellular" />
+    Телефон <input type="text"
+                   name="cellular"
+                   value="<%= ( request.getAttribute("cellValue") == null ) ? "" : request.getAttribute("cellValue") %>" />
     <%= request.getAttribute("cellphoneMessage") %>
     <br/>
-    Имя <input type="text" name="username" />
+    Имя <input type="text"
+               name="username"
+               value="<%= ( request.getAttribute("nameValue") == null ) ? "" : request.getAttribute("nameValue") %>" />
     <%= request.getAttribute("usernameMessage") %>
     <br/>
     <input type="submit" value="Заказ звонка" />
