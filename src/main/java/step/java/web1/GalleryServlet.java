@@ -1,8 +1,13 @@
 package step.java.web1;
 
+import step.java.web1.util.Hasher;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.*;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 
 public class GalleryServlet extends HttpServlet {
@@ -67,6 +72,27 @@ public class GalleryServlet extends HttpServlet {
         if( attachedFilename != null ) {  // имя успешно извлечено
             // Задача: отделить имя и расширение
             String extension ;
+            int dotPosition = attachedFilename.lastIndexOf( "." ) ;
+            if( dotPosition > -1 ) {
+                extension = attachedFilename.substring( dotPosition ) ;
+                // формируем случайное имя файла, сохраняем расширение
+                String savedFilename = Hasher.hash( attachedFilename ) + extension ;
+                // Определяем путь в файловой системе
+                String path = req.getServletContext().getRealPath( "/uploads" ) ;
+                // Полное имя файла
+                String filename = path + "\\" + savedFilename ;
+
+                File destination = new File( filename ) ;
+                Files.copy(
+                        filePart.getInputStream(),  // source (Stream)
+                        destination.toPath(),       // destination (Path)
+                        StandardCopyOption.REPLACE_EXISTING
+                ) ;
+                attachedFilename = savedFilename ;
+            }
+            else {  // no file extension
+                attachedFilename = "no file extension" ;
+            }
         }
 
         session.setAttribute(
