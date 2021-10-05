@@ -32,6 +32,19 @@ public class GalleryServlet extends HttpServlet {
         req.setCharacterEncoding( "UTF-8" ) ;
 
         HttpSession session = req.getSession() ;
+        String[] sessionAttributes = { "uploadMessage", "galleryDescription" } ;
+        for( String attrName : sessionAttributes ) {
+            String attrValue = (String)
+                    session.getAttribute( attrName ) ;
+            if( attrValue != null ) {
+                session.removeAttribute( attrName ) ;
+            } else {
+                attrValue = "" ;
+            }
+            req.setAttribute( attrName, attrValue ) ;
+        }
+        /*
+        // сообщение о загрузке файла (имя сохраненного файла)
         String uploadMessage = (String)
                 session.getAttribute( "uploadMessage" ) ;
         if( uploadMessage != null ) {
@@ -41,6 +54,16 @@ public class GalleryServlet extends HttpServlet {
         }
         req.setAttribute( "uploadMessage", uploadMessage ) ;
 
+        // Description
+        String galleryDescription = (String)
+                session.getAttribute( "galleryDescription" ) ;
+        if( galleryDescription != null ) {
+            session.removeAttribute( "galleryDescription" ) ;
+        } else {
+            galleryDescription = "" ;
+        }
+        req.setAttribute( "galleryDescription", galleryDescription ) ;
+*/
         req.getRequestDispatcher( "gallery.jsp" )
                 .forward( req, resp ) ;
     }
@@ -75,29 +98,48 @@ public class GalleryServlet extends HttpServlet {
             int dotPosition = attachedFilename.lastIndexOf( "." ) ;
             if( dotPosition > -1 ) {
                 extension = attachedFilename.substring( dotPosition ) ;
-                // формируем случайное имя файла, сохраняем расширение
-                String savedFilename = Hasher.hash( attachedFilename ) + extension ;
                 // Определяем путь в файловой системе
                 String path = req.getServletContext().getRealPath( "/uploads" ) ;
-                // Полное имя файла
-                String filename = path + "\\" + savedFilename ;
 
-                File destination = new File( filename ) ;
+                File destination ;
+                String filename, savedFilename ;
+                do {
+                    // формируем случайное имя файла, сохраняем расширение
+                    savedFilename = Hasher.hash(attachedFilename) + extension;
+                    // Полное имя файла
+                    filename = path + "\\" + savedFilename;
+                    destination = new File(filename);
+                    attachedFilename = savedFilename;
+                } while( destination.exists() ) ;  // если файл с таким именем уже есть, перегенерировать имя
+
                 Files.copy(
                         filePart.getInputStream(),  // source (Stream)
                         destination.toPath(),       // destination (Path)
                         StandardCopyOption.REPLACE_EXISTING
                 ) ;
-                attachedFilename = savedFilename ;
+
+                // копируем в папку исходного проекта (для сохранения)
+                path = "C:\\Users\\samoylenko_d\\IdeaProjects\\web1_181\\src\\main\\webapp\\uploads" ;
+                filename = path + "\\" + savedFilename ;
+                destination = new File(filename);
+                Files.copy(
+                        filePart.getInputStream(),  // source (Stream)
+                        destination.toPath(),       // destination (Path)
+                        StandardCopyOption.REPLACE_EXISTING
+                ) ;
             }
             else {  // no file extension
                 attachedFilename = "no file extension" ;
             }
         }
-
         session.setAttribute(
                 "uploadMessage",
                 ( attachedFilename == null ) ? "Name error" : attachedFilename ) ;
+        // Конец работы с файлом
+
+        // Description -  передается как форма, извлекается обычным образом
+        String description = req.getParameter( "galleryDescription" ) ;
+        session.setAttribute( "galleryDescription", description ) ;
 
         resp.sendRedirect( req.getRequestURI() ) ;
     }

@@ -17,6 +17,10 @@
 
         <input type="file" name="galleryfile" />
         <br/>
+        Description:
+        <textarea name="galleryDescription">
+            Новое изображение
+        </textarea>
         <input type="submit" value="Send" />
     </form>
 <%  String fname = (String)
@@ -27,5 +31,7 @@
     <img src="uploads/<%= fname %>" />
 
 <% } %>
+
+<%= request.getAttribute( "galleryDescription" ) %>
 </body>
 </html>
