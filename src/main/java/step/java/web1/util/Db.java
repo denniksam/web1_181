@@ -13,43 +13,29 @@ import java.sql.SQLException;
 public class Db {
     private static Connection connection ;
 
-    public static Connection getConnection() {
-        if( connection == null ) {
-            File config = new File(
-                "../webapps/web1_war/WEB-INF/config/db.json") ;
-            if( ! config.exists() ) {
-                System.err.println( "config/db.json not found" ) ;
-                return null ;
-            }
-            String connectionString ;
-            try( InputStream reader = new FileInputStream( config ) ) {
-                byte[] buf = new byte[ (int) config.length() ] ;
-                reader.read( buf ) ;
-                JSONObject configData = (JSONObject)
-                        new JSONParser().parse( new String( buf ) ) ;
-                connectionString = String.format (
-                        "jdbc:oracle:thin:%s/%s@%s:%s:XE",
-                        configData.get( "user" ),
-                        configData.get( "pass" ),
-                        configData.get( "host" ),
-                        configData.get( "port" )
-                ) ;
-            } catch( Exception ex ) {
-                System.err.println( ex.getMessage() ) ;
-                return null ;
-            }
-
-            try {
-                DriverManager.registerDriver(
+    public static boolean setConnection( JSONObject connectionData ) {
+        String connectionString ;
+        try {
+            connectionString = String.format (
+                    "jdbc:oracle:thin:%s/%s@%s:%s:XE",
+                    connectionData.get( "user" ),
+                    connectionData.get( "pass" ),
+                    connectionData.get( "host" ),
+                    connectionData.get( "port" )
+            ) ;
+            DriverManager.registerDriver(
                     new oracle.jdbc.driver.OracleDriver()
-                ) ;
-                connection =
+            ) ;
+            connection =
                     DriverManager.getConnection( connectionString ) ;
-            } catch( SQLException ex ) {
-                System.err.println( ex.getMessage() ) ;
-                return null ;
-            }
+        } catch( Exception ex ) {
+            System.err.println( ex.getMessage() ) ;
+            return false ;
         }
+        return true ;
+    }
+
+    public static Connection getConnection() {
         return connection ;
     }
 }

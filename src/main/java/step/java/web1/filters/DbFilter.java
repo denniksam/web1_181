@@ -1,7 +1,14 @@
 package step.java.web1.filters;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import step.java.web1.util.Db;
+
 import javax.servlet.*;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class DbFilter implements Filter {
 
@@ -19,6 +26,29 @@ public class DbFilter implements Filter {
             FilterChain filterChain) throws IOException, ServletException
     {
         System.out.println( "Filter works!" ) ;
+
+        File config = new File(
+                filterConfig
+                    .getServletContext()
+                    .getRealPath("/WEB-INF/config/" )
+                + "/" + "db.json" ) ;
+        if( ! config.exists() ) {
+            System.err.println( "config/db.json not found" ) ;
+        }
+
+        JSONObject configData = null ;
+        try( InputStream reader = new FileInputStream( config ) ) {
+            int fileLength = (int) config.length() ;
+            byte[] buf = new byte[ fileLength ] ;
+            if( reader.read( buf ) != fileLength )
+                throw new IOException( "File read integrity falls" ) ;
+            configData = (JSONObject)
+                    new JSONParser().parse(new String(buf));
+        } catch( Exception ex ) {
+            System.err.println( ex.getMessage() ) ;
+        }
+
+        Db.setConnection( configData ) ;
 
         filterChain.doFilter(servletRequest, servletResponse) ;
     }
