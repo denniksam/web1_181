@@ -9,24 +9,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 
 public class DbFilter implements Filter {
 
     private  FilterConfig filterConfig ;
 
     @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
+    public void init(FilterConfig filterConfig)  {
         this.filterConfig = filterConfig ;
     }
 
     @Override
-    public void doFilter(
-            ServletRequest servletRequest,
-            ServletResponse servletResponse,
-            FilterChain filterChain) throws IOException, ServletException
-    {
-        System.out.println( "Filter works!" ) ;
-
+    public void doFilter( ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+        // System.out.println( "Filter works!" ) ;
+        Db.setConnection( null ) ;
         File config = new File(
                 filterConfig
                     .getServletContext()
@@ -34,23 +31,29 @@ public class DbFilter implements Filter {
                 + "/" + "db.json" ) ;
         if( ! config.exists() ) {
             System.err.println( "config/db.json not found" ) ;
+        } else {
+            try (InputStream reader = new FileInputStream(config)) {
+                int fileLength = (int) config.length();
+                byte[] buf = new byte[fileLength];
+                if (reader.read(buf) != fileLength)
+                    throw new IOException("File read integrity falls");
+                JSONObject configData = (JSONObject)
+                        new JSONParser().parse(new String(buf));
+                if( ! Db.setConnection( configData ) )
+                    throw new SQLException( "Db connection error" ) ;
+            } catch( Exception ex ) {
+                System.err.println( ex.getMessage() ) ;
+            }
         }
-
-        JSONObject configData = null ;
-        try( InputStream reader = new FileInputStream( config ) ) {
-            int fileLength = (int) config.length() ;
-            byte[] buf = new byte[ fileLength ] ;
-            if( reader.read( buf ) != fileLength )
-                throw new IOException( "File read integrity falls" ) ;
-            configData = (JSONObject)
-                    new JSONParser().parse(new String(buf));
-        } catch( Exception ex ) {
-            System.err.println( ex.getMessage() ) ;
+        // Checking connection to be opened
+        if( Db.getConnection() == null ) {
+            // No connection - use static mode
+            servletRequest
+                .getRequestDispatcher( "/static.jsp" )
+                .forward( servletRequest, servletResponse ) ;
+        } else {
+            filterChain.doFilter(servletRequest, servletResponse);
         }
-
-        Db.setConnection( configData ) ;
-
-        filterChain.doFilter(servletRequest, servletResponse) ;
     }
 
     @Override
