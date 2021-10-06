@@ -52,7 +52,8 @@ public class DbFilter implements Filter {
                 .getRequestDispatcher( "/static.jsp" )
                 .forward( servletRequest, servletResponse ) ;
         } else {
-            filterChain.doFilter(servletRequest, servletResponse);
+            filterChain.doFilter( servletRequest, servletResponse ) ;
+            Db.closeConnection() ;
         }
     }
 

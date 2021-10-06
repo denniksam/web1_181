@@ -17,8 +17,9 @@
 
         <input type="file" name="galleryfile" />
         <br/>
-        <label>Description:
-        <textarea name="galleryDescription">Новое изображение</textarea></label>
+        <label> Description:
+                <textarea name="galleryDescription">Новое изображение</textarea>
+        </label>
         <input type="submit" value="Send" />
     </form>
 <%  String uploadMessage = (String)

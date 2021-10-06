@@ -4,6 +4,7 @@ import org.json.simple.JSONObject;
 import step.java.web1.models.Picture;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Db {
     final private static String SUFFIX = "_0" ;
@@ -37,6 +38,12 @@ public class Db {
 
     public static Connection getConnection() {
         return connection ;
+    }
+
+    public static void closeConnection() {
+        if( connection != null )
+            try { connection.close() ; }
+            catch( Exception ignored ) {}
     }
 
     /**
@@ -76,5 +83,25 @@ public class Db {
                     "addPicture: " + ex.getMessage() + " " + query ) ;
             return false ;
         }
+    }
+
+    /**
+     * Loads picture(s) list (gallery)
+     */
+    public static ArrayList<Picture> getPictures() {
+        ArrayList<Picture> res = null ;
+        try ( Statement statement = connection.createStatement() ) {
+            String query = "SELECT * FROM Pictures" + SUFFIX ;
+            ResultSet answer = statement.executeQuery( query ) ;
+            res = new ArrayList<>() ;
+            while( answer.next() ) {
+                res.add( new Picture(
+
+                ) ) ;
+            }
+        } catch( Exception ex ) {
+            System.err.println( "getPictures: " + ex.getMessage() ) ;
+        }
+        return res ;
     }
 }
