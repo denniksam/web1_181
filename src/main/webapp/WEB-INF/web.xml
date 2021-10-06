@@ -4,6 +4,16 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
 
+    <!-- DbFilter - init DB connection  -->
+    <filter>
+        <filter-name>dbFilter</filter-name>
+        <filter-class>step.java.web1.filters.DbFilter</filter-class>
+    </filter>
+    <filter-mapping> <!-- @WebFilter("/*") -->
+        <filter-name>dbFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
     <!-- galleryServlet = new GalleryServlet()  -->
     <servlet>
         <servlet-name>galleryServlet</servlet-name>
