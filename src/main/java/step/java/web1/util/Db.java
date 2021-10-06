@@ -1,11 +1,9 @@
 package step.java.web1.util;
 
 import org.json.simple.JSONObject;
+import step.java.web1.models.Picture;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class Db {
     final private static String SUFFIX = "_0" ;
@@ -57,6 +55,26 @@ public class Db {
         } catch( SQLException ex ) {
             System.err.println(
                 "createGallery: " + ex.getMessage() + " " + query ) ;
+        }
+    }
+
+    /**
+     * Inserts Picture in DB
+     */
+    public static boolean addPicture( Picture pic ) {
+        if( connection == null ) return false ;
+        String query = "INSERT INTO Pictures" + SUFFIX +
+                "(Name, Description) VALUES(?, ?)" ;
+        try( PreparedStatement statement =
+                    connection.prepareStatement( query ) ) {
+            statement.setString( 1, pic.getName() ) ;
+            statement.setString( 2, pic.getDescription() ) ;
+            statement.executeUpdate() ;
+            return true ;
+        } catch( SQLException ex ) {
+            System.err.println(
+                    "addPicture: " + ex.getMessage() + " " + query ) ;
+            return false ;
         }
     }
 }

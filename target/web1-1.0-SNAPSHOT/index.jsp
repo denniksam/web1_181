@@ -74,5 +74,6 @@
 <a href="hello-servlet">Hello Servlet</a>
 
 <%= Db.getConnection() %>
+<% Db.createGallery(); %>
 </body>
 </html>

@@ -5,7 +5,7 @@
   Time: 9:47
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
     <title>Gallery</title>
@@ -17,21 +17,17 @@
 
         <input type="file" name="galleryfile" />
         <br/>
-        Description:
-        <textarea name="galleryDescription">
-            Новое изображение
-        </textarea>
+        <label>Description:
+        <textarea name="galleryDescription">Новое изображение</textarea></label>
         <input type="submit" value="Send" />
     </form>
-<%  String fname = (String)
+<%  String uploadMessage = (String)
         request.getAttribute( "uploadMessage" ) ;
+    if( uploadMessage != null ) { %>
 
-    if( ! "".equals( fname ) ) { %>
-
-    <img src="uploads/<%= fname %>" />
+   <b><%= uploadMessage %></b>
 
 <% } %>
 
-<%= request.getAttribute( "galleryDescription" ) %>
 </body>
 </html>
