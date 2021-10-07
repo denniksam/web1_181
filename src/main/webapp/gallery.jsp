@@ -15,19 +15,22 @@
 </head>
 <body>
     <h1>Галерея</h1>
-    <%  Object pics = request.getAttribute( "pictures" ) ;
-        ArrayList<Picture> pictures = null ;
+    <%  Picture[] pictures ;
 
-        if( pics instanceof ArrayList ) {
-            pictures = (ArrayList<Picture>) pics;
+        try {
+            pictures = (Picture[])
+                    request.getAttribute( "pictures" ) ;
+        } catch( ClassCastException ignored ) {
+            pictures = new Picture[0] ;
         }
         if( pictures != null )
         for( Picture pic : pictures ) { %>
     <div class="picture">
-        <img src="uploads/<%= pic.getName() %>" />
+        <img src="uploads/<%= pic.getName() %>" alt="<%= pic.getName() %>" />
         <p><%= pic.getDescription() %></p>
         <i><%= pic.getMoment() %></i>
         <tt><%= pic.getId() %></tt>
+        <button>Удалить</button>
     </div>
     <% } %>
     <form method="post"
@@ -48,6 +51,7 @@
    <b><%= uploadMessage %></b>
 
 <% } %>
-
 </body>
+
+<script src="js/gallery.js"></script>
 </html>

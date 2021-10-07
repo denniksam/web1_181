@@ -14,12 +14,15 @@ body {
     width: 25vw;
 }
     .picture img {
-        max-height: 150px;
-        max-width: 200px;
+        max-height: 10vw;
+        max-width: 15vw;
     }
     .picture p {
         font-size: 3vw;
     }
     .picture tt {
         visibility: hidden;
+    }
+    .picture button {
+        color: maroon;
     }

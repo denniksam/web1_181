@@ -1,5 +1,6 @@
 package step.java.web1;
 
+import org.json.simple.JSONObject;
 import step.java.web1.models.Picture;
 import step.java.web1.util.Db;
 import step.java.web1.util.Hasher;
@@ -15,6 +16,23 @@ import java.util.ArrayList;
 
 public class GalleryServlet extends HttpServlet {
 
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String pictureId = req.getParameter( "id" ) ;
+        JSONObject answer = new JSONObject() ;
+        if( pictureId == null || "".equals( pictureId ) ) {
+            answer.put( "status", "-1" ) ;
+            answer.put( "message", "Id required" ) ;
+        } else {
+            // Удаление из БД
+
+            answer.put( "status", "1" ) ;
+            answer.put( "message", pictureId ) ;
+        }
+
+        resp.setContentType( "application/json" ) ;
+        resp.getWriter().print( answer.toString() ) ;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -37,8 +55,11 @@ public class GalleryServlet extends HttpServlet {
 
         // Main content - pictures collection
         ArrayList<Picture> pictures = Db.getPictures() ;
-        if( pictures == null ) pictures = new ArrayList<>() ;
-        req.setAttribute( "pictures", pictures ) ;
+        Picture[] picturesArr = ( pictures == null )
+            ? new Picture[0]
+            : pictures.toArray( new Picture[0] ) ;
+
+        req.setAttribute( "pictures", picturesArr ) ;
 
         // goto view
         req.getRequestDispatcher( "gallery.jsp" )
