@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 
 
 public class GalleryServlet extends HttpServlet {
@@ -17,23 +18,11 @@ public class GalleryServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        /*
-            Загрузка файла:
-                Upload - от клиента к серверу
-                Download - от сервера к клиенту
-            Uploading:
-                1. <form> <input type="file" ... />
-                2. <form method="post" enctype="multipart/form-data"
-                3. конфиг. сервлета: а) <multipart-config />
-                                     б) @MultipartConfig
-                4. прием файла: в методе doPost через req.getPart
-                5. извлечение имени файла !! по безопасности
-                   крайне не рекомендуется сохранять файлы под
-                   переданными именами
-        */
-        req.setCharacterEncoding( "UTF-8" ) ;
 
+        req.setCharacterEncoding( "UTF-8" ) ;
         HttpSession session = req.getSession() ;
+
+        // session attributes (messages)
         String[] sessionAttributes = { "uploadMessage", "galleryDescription" } ;
         for( String attrName : sessionAttributes ) {
             String attrValue = (String)
@@ -45,27 +34,13 @@ public class GalleryServlet extends HttpServlet {
             }
             req.setAttribute( attrName, attrValue ) ;
         }
-        /*
-        // сообщение о загрузке файла (имя сохраненного файла)
-        String uploadMessage = (String)
-                session.getAttribute( "uploadMessage" ) ;
-        if( uploadMessage != null ) {
-            session.removeAttribute( "uploadMessage" ) ;
-        } else {
-            uploadMessage = "" ;
-        }
-        req.setAttribute( "uploadMessage", uploadMessage ) ;
 
-        // Description
-        String galleryDescription = (String)
-                session.getAttribute( "galleryDescription" ) ;
-        if( galleryDescription != null ) {
-            session.removeAttribute( "galleryDescription" ) ;
-        } else {
-            galleryDescription = "" ;
-        }
-        req.setAttribute( "galleryDescription", galleryDescription ) ;
-*/
+        // Main content - pictures collection
+        ArrayList<Picture> pictures = Db.getPictures() ;
+        if( pictures == null ) pictures = new ArrayList<>() ;
+        req.setAttribute( "pictures", pictures ) ;
+
+        // goto view
         req.getRequestDispatcher( "gallery.jsp" )
                 .forward( req, resp ) ;
     }
@@ -161,3 +136,17 @@ public class GalleryServlet extends HttpServlet {
     b) extract from header:
         content-disposition: form-data; name="galleryfile"; filename="img.png"
  */
+/*
+    Загрузка файла:
+        Upload - от клиента к серверу
+        Download - от сервера к клиенту
+    Uploading:
+        1. <form> <input type="file" ... />
+        2. <form method="post" enctype="multipart/form-data"
+        3. конфиг. сервлета: а) <multipart-config />
+                             б) @MultipartConfig
+        4. прием файла: в методе doPost через req.getPart
+        5. извлечение имени файла !! по безопасности
+           крайне не рекомендуется сохранять файлы под
+           переданными именами
+*/
