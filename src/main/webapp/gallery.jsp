@@ -1,4 +1,5 @@
-<%--
+<%@ page import="step.java.web1.models.Picture" %>
+<%@ page import="step.java.web1.util.Db" %><%--
   Created by IntelliJ IDEA.
   User: samoylenko_d
   Date: 04.10.2021
@@ -8,9 +9,19 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
+    <link rel="stylesheet" href="css/gallery.css" />
     <title>Gallery</title>
 </head>
 <body>
+    <h1>Галерея</h1>
+    <% for( Picture pic : Db.getPictures() ) { %>
+    <div class="picture">
+        <img src="uploads/<%= pic.getName() %>" />
+        <p><%= pic.getDescription() %></p>
+        <i><%= pic.getMoment() %></i>
+        <tt><%= pic.getId() %></tt>
+    </div>
+    <% } %>
     <form method="post"
           enctype="multipart/form-data"
           action="" >

@@ -7,6 +7,13 @@ public class Picture {
     private String Description ;
     private String Moment ;
 
+    public Picture(String id, String name, String description, String moment) {
+        Id = id;
+        Name = name;
+        Description = description;
+        Moment = moment;
+    }
+
     public Picture(String name, String description) {
         Name = name;
         Description = description;

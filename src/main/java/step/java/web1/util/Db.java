@@ -49,7 +49,7 @@ public class Db {
     /**
      * Creates table for gallery
      */
-    public static void createGallery() {
+    private static void createGallery() {
         if( connection == null ) return ;
         String query = null ;
         try( Statement statement = connection.createStatement() ) {
@@ -96,7 +96,10 @@ public class Db {
             res = new ArrayList<>() ;
             while( answer.next() ) {
                 res.add( new Picture(
-
+                    answer.getString( "ID" ),
+                    answer.getString( "NAME" ),
+                    answer.getString( "DESCRIPTION" ),
+                    answer.getString( "MOMENT" )
                 ) ) ;
             }
         } catch( Exception ex ) {

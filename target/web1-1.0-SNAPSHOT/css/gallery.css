@@ -1,0 +1,25 @@
+body {
+    background: #bebebe;
+    margin: 0;
+    padding: 0;
+}
+
+.picture {
+    background: snow;
+    border: 2px solid #999;
+    box-shadow: 7px 7px 3px #777;
+    display: inline-block;
+    margin: 10px;
+    vertical-align: top;
+    width: 25vw;
+}
+    .picture img {
+        max-height: 150px;
+        max-width: 200px;
+    }
+    .picture p {
+        font-size: 3vw;
+    }
+    .picture tt {
+        visibility: hidden;
+    }
