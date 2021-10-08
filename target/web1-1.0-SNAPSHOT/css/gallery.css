@@ -14,8 +14,8 @@ body {
     width: 25vw;
 }
     .picture img {
-        max-height: 150px;
-        max-width: 200px;
+        max-height: 10vw;
+        max-width: 15vw;
     }
     .picture p {
         font-size: 3vw;
@@ -26,3 +26,15 @@ body {
     .picture button {
         color: maroon;
     }
+.tool-button {
+    background: url("../img/edit_icons.png");
+    background-size: 300%;
+    cursor: pointer;
+    display: inline-block;
+    height: 50px;
+    margin: 2px;
+    width: 50px;
+}
+.tool-download {
+    background-position: -100px -50px ;
+}

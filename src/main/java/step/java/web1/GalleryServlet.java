@@ -17,6 +17,7 @@ import java.util.ArrayList;
 public class GalleryServlet extends HttpServlet {
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String pictureId = req.getParameter( "id" ) ;
         JSONObject answer = new JSONObject() ;
