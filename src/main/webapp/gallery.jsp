@@ -30,10 +30,9 @@
         <p><%= pic.getDescription() %></p>
         <i><%= pic.getMoment() %></i>
         <tt><%= pic.getId() %></tt>
-        <button>Удалить</button>
-        <div class="tool-button tool-delete"></div>
-        <div class="tool-button tool-download"></div>
-        <div class="tool-button tool-edit"></div>
+        <div class="tool-button tool-delete" title="Удалить"></div>
+        <div class="tool-button tool-download" title="Скачать"></div>
+        <div class="tool-button tool-edit" title="Редактировать"></div>
 
     </div>
     <% } %>
