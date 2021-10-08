@@ -66,6 +66,32 @@ public class Db {
     }
 
     /**
+     * Find picture by id
+     */
+    public static Picture getPictureById( String id ) {
+        if( connection == null ) return null ;
+        try( PreparedStatement prep = connection.prepareStatement(
+                "SELECT * FROM Pictures" + SUFFIX
+                + " WHERE Id = ?"
+        ) ) {
+            prep.setString( 1, id ) ;
+            ResultSet res = prep.executeQuery() ;
+            if( res.next() ) {
+                return new Picture(
+                    res.getString( "ID" ),
+                    res.getString( "NAME" ),
+                    res.getString( "DESCRIPTION" ),
+                    res.getString( "MOMENT" )
+                ) ;
+            } else return null ;
+        } catch( SQLException ex ) {
+            System.err.println( "getPictureById: "
+                    + ex.getMessage() ) ;
+            return null ;
+        }
+    }
+
+    /**
      * Inserts Picture in DB
      */
     public static boolean addPicture( Picture pic ) {

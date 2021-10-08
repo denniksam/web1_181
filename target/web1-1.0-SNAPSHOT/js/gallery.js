@@ -24,5 +24,6 @@ function downloadClick(e) {
     const tt = e.target.parentNode.querySelector("tt");
     if( ! tt) throw "tt not found in parent node";
     const pid = tt.innerHTML;
-    console.log(pid);
+    // console.log(pid);
+    window.location = "download/" + pid;
 }
