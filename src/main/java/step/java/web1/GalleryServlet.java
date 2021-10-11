@@ -1,5 +1,6 @@
 package step.java.web1;
 
+import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
 import step.java.web1.models.Picture;
 import step.java.web1.util.Db;
@@ -9,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -144,6 +146,36 @@ public class GalleryServlet extends HttpServlet {
         session.setAttribute( "galleryDescription", description ) ;
 
         resp.sendRedirect( req.getRequestURI() ) ;
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // Данные, передаваемые не в формате <form>
+        // не разбираются в reg.getParameter
+        try {
+            InputStream reader = req.getInputStream() ;
+            int sym ;
+            StringBuilder sb = new StringBuilder() ;
+            while( ( sym = reader.read() ) != -1 ) {
+                sb.append( (char) sym ) ;
+            }
+            JSONObject params =  (JSONObject)
+                    new JSONParser().parse( sb.toString() ) ;
+            if( Db.updatePicture( new Picture(
+                    (String) params.get( "id" ),
+                    null,
+                    (String) params.get( "description" ),
+                    null
+            ) ) ) {
+                resp.getWriter().print( "Update OK" ) ;
+            } else {
+                resp.getWriter().print( "Update error" ) ;
+            }
+        } catch( Exception ex ) {
+            System.err.println( "GalleryServlet(PUT): " + ex.getMessage() ) ;
+            resp.getWriter().print( "PUT error" ) ;
+        }
+
     }
 }
 /*
