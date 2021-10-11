@@ -10,6 +10,7 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
+    <meta charset="UTF-8" />
     <link rel="stylesheet" href="css/gallery.css" />
     <title>Gallery</title>
 </head>

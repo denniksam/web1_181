@@ -41,18 +41,33 @@ function editClick(e) {
         // второе нажатие - save
         descr.removeAttribute("contenteditable");
         e.target.style["background-position"] = "0 0" ;
-        delete descr.savedText;
         container.removeChild( container.cancelBtnRef ) ;
         delete container.cancelBtnRef;
 
-        // console.log({id: pid, description: descr.innerText });
-        fetch(window.location.href,{
-            method: "PUT",
-            body: JSON.stringify({id: pid, description: descr.innerText }),
-            headers:{
-                "Content-Type": "application/json"
-            }
-        }).then(r => r.text()).then(console.log);
+        if( descr.savedText !== descr.innerText ) {
+            // console.log({id: pid, description: descr.innerText });
+            fetch(window.location.href, {
+                method: "PUT",
+                body: JSON.stringify({id: pid, description: descr.innerText}),
+                // body: `{"id": "${pid}", "description": "${descr.innerText}" }`,
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                }
+            }).then(r => r.json()).then(j => {
+                if( j.status > 0 ) {
+                    alert( "Update OK" ) ;
+                    delete descr.savedText;
+                } else {
+                    alert( "Update error" ) ;
+                    console.log(j);
+                    descr.innerText = descr.savedText;
+                    delete descr.savedText;
+                }
+            });
+        } else {
+            delete descr.savedText;
+        }
+
     }
 
 
@@ -80,3 +95,13 @@ function findPictureId(e) {
     if( ! tt) throw "tt not found in parent node";
     return tt.innerHTML;
 }
+
+/*
+    Задание.
+    1. Если после редактирования текст не поменялся,
+       то не отправлять на сервер
+    2. Провести анализ ответа сервера: если положительный,
+       то вывести сообщение (обновлено), если нет - восстановить
+       исходный текст (до редактирования)
+
+ */

@@ -133,4 +133,53 @@ public class Db {
         }
         return res ;
     }
+
+    /**
+     * Update picture
+     */
+    public static boolean updatePicture( Picture pic ) {
+        if( connection == null
+         || pic == null
+         || pic.getId() == null )
+        {
+            return false ;
+        }
+        // Validate Id
+        if( ! pic.getId().matches( "^[0-9A-F]+$" ) ) {
+            System.err.println( "updatePicture: Id error " + pic.getId() ) ;
+            return false ;
+        }
+        String query = "UPDATE Pictures" + SUFFIX + " SET " ;
+        boolean needComma = false;
+
+        if( pic.getName() != null ) {
+            query += " Name = '" +
+                    pic.getName().replace("'", "''") + "'";
+            needComma = true;
+        }
+        if( pic.getDescription() != null ) {
+            if( needComma ) query += ", " ;
+            query += " Description = '" + pic.getDescription().replace("'", "''") + "'" ;
+            needComma = true;
+        }
+        if( pic.getMoment() != null ) {
+            if( needComma ) query += ", " ;
+            query += " Moment = '" + pic.getMoment().replace("'", "''") + "'" ;
+            needComma = true;
+        }
+        if( ! needComma ) {
+            // No fields were added
+            return false ;
+        }
+        query += " WHERE Id = '" + pic.getId() + "'" ;
+
+        try( Statement statement = connection.createStatement() ) {
+            statement.executeUpdate( query ) ;
+            return true ;
+        } catch( SQLException ex ) {
+            System.err.println(
+                    "updatePicture: " + ex.getMessage() + " " + query ) ;
+            return false ;
+        }
+    }
 }

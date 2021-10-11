@@ -11,6 +11,7 @@ import javax.servlet.http.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -152,6 +153,7 @@ public class GalleryServlet extends HttpServlet {
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // Данные, передаваемые не в формате <form>
         // не разбираются в reg.getParameter
+        resp.setContentType( "application/json" ) ;
         try {
             InputStream reader = req.getInputStream() ;
             int sym ;
@@ -159,21 +161,31 @@ public class GalleryServlet extends HttpServlet {
             while( ( sym = reader.read() ) != -1 ) {
                 sb.append( (char) sym ) ;
             }
-            JSONObject params =  (JSONObject)
-                    new JSONParser().parse( sb.toString() ) ;
+            String body = new String(
+                sb.toString().getBytes(
+                        StandardCharsets.ISO_8859_1 ),
+                StandardCharsets.UTF_8
+            ) ;
+            // error - testing
+            if( body.contains( "?" ) ) {
+                resp.getWriter().print( "{\"status\":-3}" ) ;
+                return ;
+            }
+            JSONObject params = (JSONObject)
+                new JSONParser().parse( body ) ;
             if( Db.updatePicture( new Picture(
                     (String) params.get( "id" ),
                     null,
                     (String) params.get( "description" ),
                     null
             ) ) ) {
-                resp.getWriter().print( "Update OK" ) ;
+                resp.getWriter().print( "{\"status\":1}" ) ;
             } else {
-                resp.getWriter().print( "Update error" ) ;
+                resp.getWriter().print( "{\"status\":-1}" ) ;
             }
         } catch( Exception ex ) {
             System.err.println( "GalleryServlet(PUT): " + ex.getMessage() ) ;
-            resp.getWriter().print( "PUT error" ) ;
+            resp.getWriter().print( "{\"status\":-2}" ) ;
         }
 
     }
